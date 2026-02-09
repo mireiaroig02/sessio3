@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Bingo Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'pastel-green': '#E8F5E9',
+                        'pastel-blue': '#E3F2FD',
+                        'green-accent': '#81C784',
+                        'blue-accent': '#64B5F6',
+                    },
+                    fontFamily: {
+                        sans: ['ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Animations and Styles */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .wheel-container {
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transform-origin: center;
+        }
+
+        .modal-enter {
+            animation: modalIn 0.3s ease-out forwards;
+        }
+
+        .modal-exit {
+            animation: modalOut 0.3s ease-in forwards;
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes modalOut {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to { opacity: 0; transform: scale(0.9) translateY(20px); }
+        }
+        
+        .spin-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-pastel-green flex flex-col items-center justify-center p-4 text-gray-800 overflow-hidden">
+
+    <!-- Header -->
+    <header class="mb-4 md:mb-8 text-center z-10">
+        <h1 class="text-3xl md:text-5xl font-extrabold text-blue-accent drop-shadow-sm tracking-tight">
+            Scientific Bingo Dashboard
+        </h1>
+        <p class="text-gray-500 mt-2 text-lg">
+            Projecta a l'aula i juga! Definitions remaining: <span id="def-count">42</span>
+        </p>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="relative flex-grow flex items-center justify-center w-full max-w-4xl">
+        
+        <!-- Wheel Container -->
+        <div id="wheel-wrapper" class="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
+            <!-- Pointer -->
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 z-20 w-8 h-12">
+                <div class="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-red-500 drop-shadow-md"></div>
+            </div>
+
+            <!-- The Spinning Wheel -->
+            <div id="wheel" class="w-full h-full wheel-container">
+                <svg viewBox="0 0 400 400" class="w-full h-full drop-shadow-2xl">
+                    <g id="wheel-slices"></g>
+                    <g id="wheel-text"></g>
+                    <!-- Inner Circle for Hub -->
+                    <circle cx="200" cy="200" r="20" fill="white" class="shadow-inner" />
+                    <circle cx="200" cy="200" r="10" fill="#81C784" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Game Over Message -->
+        <div id="game-over" class="hidden absolute text-2xl text-gray-400 font-bold p-12 bg-white rounded-full shadow-inner">
+            JOC ACABAT!
+        </div>
+
+    </div>
+
+    <!-- Controls -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 z-10 w-full">
+        <button id="btn-spin" onclick="spinWheel()" class="flex items-center gap-2 px-8 py-4 bg-green-accent hover:bg-green-500 text-white font-bold text-xl rounded-full shadow-lg transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg id="icon-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 12"></path><path d="M21 3v9h-9"></path></svg>
+            GIRAR RULETA
+        </button>
+
+        <button id="btn-reset" onclick="resetGame()" class="flex items-center gap-2 px-6 py-3 bg-pastel-blue hover:bg-blue-200 text-blue-800 font-semibold text-lg rounded-full shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74-2.74L3 12"></path><path d="M3 3v9h9"></path></svg>
+            Reiniciar joc
+        </button>
+    </div>
+
+    <!-- Export Button -->
+    <button onclick="downloadSelf()" class="mt-8 mb-4 px-4 py-2 bg-pastel-blue/50 hover:bg-pastel-blue text-blue-accent rounded-full text-xs font-medium transition-colors cursor-pointer opacity-70 hover:opacity-100 z-10">
+        Descarregar fitxer per a GitHub
+    </button>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0" onclick="closeModal()">
+        <div id="modal-content" class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full relative overflow-hidden border-4 border-pastel-blue transform scale-95 transition-all duration-300" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+            </button>
+
+            <div class="text-center space-y-8 mt-2">
+                <h2 class="text-3xl font-bold text-blue-accent uppercase tracking-wide">
+                    Definició Seleccionada
+                </h2>
+
+                <div class="p-6 bg-pastel-green rounded-xl border-l-4 border-green-accent">
+                    <p id="modal-definition" class="text-2xl md:text-3xl font-medium text-gray-800 leading-relaxed">
+                        "..."
+                    </p>
+                </div>
+
+                <div class="flex justify-center gap-4 pt-4">
+                    <button onclick="removeDefinition()" class="flex items-center gap-2 px-6 py-3 bg-red-100 text-red-600 hover:bg-red-200 font-semibold rounded-lg transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 group-hover:scale-110 transition-transform"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+                        Eliminar definició
+                    </button>
+                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 hover:bg-gray-200 font-semibold rounded-lg transition-colors">
+                        Tancar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // --- DATA ---
+        const initialDefinitions = [
+            "Pathway d'apoptosi activat per senyals externes com TNF o FasL.",
+            "Formació de protuberàncies o bombolles a la membrana cel·lular durant l'apoptosi.",
+            "Tipus de mort cel·lular accidental amb pèrdua d'integritat de membrana.",
+            "Tècnica que analitza cèl·lules individuals en suspensió.",
+            "Procés pel qual els macròfags eliminen cossos apoptòtics.",
+            "Tècnica que detecta fragmentació d'ADN marcant extrems 3'-OH.",
+            "Orgànul clau en la via intrínseca d'apoptosi.",
+            "Característica dels processos apoptòtics que requereixen energia metabòlica.",
+            "Colorant fluorescent que s'uneix a l'ADN.",
+            "Proteïnes de superfície cel·lular que inicien la via extrínseca d'apoptosi.",
+            "Fragments cel·lulars envoltats de membrana que es formen durant l'apoptosi.",
+            "Fosfolípid que s'externalitza durant l'apoptosi primerenca.",
+            "Característica molecular de l'apoptosi detectada per TUNEL.",
+            "Propietat de la membrana que es manté en apoptosi però es perd en necrosi.",
+            "Resposta que NO s'activa durant l'apoptosi fisiològica.",
+            "Proteïna que s'uneix a fosfatidilserina externalitzada.",
+            "Pathway d'apoptosi activat per danys intracel·lulars.",
+            "Complex proteic que activa caspases iniciadores.",
+            "Colorant vital que travessa membranes íntegres.",
+            "Citocina que pot activar la via extrínseca d'apoptosi.",
+            "Principal caspasa executora de l'apoptosi.",
+            "Proteïna mitocondrial alliberada durant la via intrínseca.",
+            "Caspasa iniciadora de la via extrínseca.",
+            "Assaig colorimètric que mesura activitat metabòlica.",
+            "Percentatge de cèl·lules vives en un cultiu.",
+            "Colorant que només entra en cèl·lules amb membrana plasmàtica danyada.",
+            "Tècnica que permet el creixement de cèl·lules fora del seu entorn natural.",
+            "Complex DNA-histones que es condensa i reorganitza durant l'apoptosi.",
+            "Disminució de mida cel·lular i pèrdua d'adhesions cel·lulars.",
+            "Estat compactat i reorganitzat del DNA nuclear durant l'apoptosi.",
+            "Durada que les cèl·lules han estat en cultiu.",
+            "Enzims que tallen el DNA internament (fragmentació).",
+            "Compactació de la cromatina nuclear característica de l'apoptosi.",
+            "Propietat que permet visualització i quantificació per microscòpia.",
+            "Capacitat de la membrana íntegra d'excloure colorants com el iodur propidi.",
+            "Característica de les cèl·lules apoptòtiques que mantenen la integritat de la membrana.",
+            "Tipus de caspasa (3, 6, 7) responsable de l'execució dels canvis finals.",
+            "Tipus de caspasa (8, 9) que inicia les cascades apoptòtiques.",
+            "Capacitat d'una substància per causar dany o mort cel·lular.",
+            "p53: Proteïna supressora de tumors que activa l'apoptosi.",
+            "Bcl-2: Proteïna anti-apoptòtica mitocondrial.",
+            "Fase amb pèrdua d'integritat de membrana (apoptosi tardana)."
+        ];
+        
+        const COLORS = ['#E8F5E9', '#E3F2FD', '#81C784', '#64B5F6', '#FFF9C4', '#F8BBD0'];
+
+        // --- STATE ---
+        let currentDefinitions = [...initialDefinitions];
+        let rotation = 0;
+        let isSpinning = false;
+        let selectedDefinition = null;
+
+        // --- DOM ELEMENTS ---
+        const wheelEl = document.getElementById('wheel');
+        const wheelSlices = document.getElementById('wheel-slices');
+        const wheelText = document.getElementById('wheel-text');
+        const defCountEl = document.getElementById('def-count');
+        const gameOverEl = document.getElementById('game-over');
+        const wheelWrapper = document.getElementById('wheel-wrapper');
+        
+        const btnSpin = document.getElementById('btn-spin');
+        const btnReset = document.getElementById('btn-reset');
+        const iconSpin = document.getElementById('icon-spin');
+
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-content');
+        const modalDefinition = document.getElementById('modal-definition');
+
+        // --- INITIALIZATION ---
+        function renderWheel() {
+            const numItems = currentDefinitions.length;
+            
+            // Clear content
+            wheelSlices.innerHTML = '';
+            wheelText.innerHTML = '';
+
+            if (numItems === 0) {
+                wheelWrapper.classList.add('hidden');
+                gameOverEl.classList.remove('hidden');
+                btnSpin.disabled = true;
+                btnReset.disabled = false;
+                defCountEl.innerText = '0';
+                return;
+            }
+
+            wheelWrapper.classList.remove('hidden');
+            gameOverEl.classList.add('hidden');
+            btnSpin.disabled = false;
+            btnReset.disabled = false;
+            defCountEl.innerText = numItems;
+
+            const sliceAngle = 360 / numItems;
+            const radius = 200;
+            const cx = 200;
+            const cy = 200;
+
+            currentDefinitions.forEach((item, index) => {
+                // 1. Draw Slice
+                const startAngle = index * sliceAngle;
+                const endAngle = (index + 1) * sliceAngle;
+
+                // Subtract 90 deg to start top-center
+                const startRad = (startAngle - 90) * (Math.PI / 180);
+                const endRad = (endAngle - 90) * (Math.PI / 180);
+
+                const x1 = cx + radius * Math.cos(startRad);
+                const y1 = cy + radius * Math.sin(startRad);
+                const x2 = cx + radius * Math.cos(endRad);
+                const y2 = cy + radius * Math.sin(endRad);
+
+                // Large arc flag
+                const largeArcFlag = sliceAngle > 180 ? 1 : 0;
+
+                const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+                
+                const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                pathEl.setAttribute('d', pathData);
+                pathEl.setAttribute('fill', COLORS[index % COLORS.length]);
+                pathEl.setAttribute('stroke', 'white');
+                pathEl.setAttribute('stroke-width', '1');
+                wheelSlices.appendChild(pathEl);
+
+                // 2. Draw Text
+                const angle = index * sliceAngle + sliceAngle / 2;
+                const rad = (angle - 90) * (Math.PI / 180);
+                const textRadius = radius * 0.75;
+                const tx = cx + textRadius * Math.cos(rad);
+                const ty = cy + textRadius * Math.sin(rad);
+                
+                // Truncate logic similar to React
+                let displayText = numItems <= 12 ? (item.length > 15 ? item.substring(0, 15) + '...' : item) : (index + 1).toString();
+
+                const textEl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                textEl.setAttribute('x', tx);
+                textEl.setAttribute('y', ty);
+                textEl.setAttribute('fill', '#374151');
+                textEl.setAttribute('font-size', '8');
+                textEl.setAttribute('font-weight', 'bold');
+                textEl.setAttribute('text-anchor', 'middle');
+                textEl.setAttribute('dominant-baseline', 'middle');
+                textEl.setAttribute('transform', `rotate(${angle + 90}, ${tx}, ${ty})`);
+                textEl.textContent = displayText;
+                wheelText.appendChild(textEl);
+            });
+        }
+
+        renderWheel();
+
+        // --- ACTIONS ---
+
+        function spinWheel() {
+            if (isSpinning || currentDefinitions.length === 0) return;
+
+            isSpinning = true;
+            btnSpin.disabled = true;
+            btnReset.disabled = true;
+            iconSpin.classList.add('spin-icon'); // Spinning animation on icon
+
+            const randomIndex = Math.floor(Math.random() * currentDefinitions.length);
+            selectedDefinition = currentDefinitions[randomIndex];
+
+            const sliceAngle = 360 / currentDefinitions.length;
+            const itemAngle = randomIndex * sliceAngle + sliceAngle / 2;
+            const targetAngle = 360 - itemAngle; // Target to be at 0 degrees (top)
+
+            const currentRotationMod = rotation % 360;
+            // Always spin forward at least 5 times (1800 deg)
+            const distance = (targetAngle - currentRotationMod + 360) % 360;
+            const extraSpins = 1800; // 5 spins
+            const newRotation = rotation + extraSpins + distance;
+            
+            rotation = newRotation;
+            
+            // Apply rotation
+            wheelEl.style.transform = `rotate(${rotation}deg)`;
+
+            // Wait for animation to finish
+            setTimeout(() => {
+                isSpinning = false;
+                btnSpin.disabled = false;
+                btnReset.disabled = false;
+                iconSpin.classList.remove('spin-icon');
+                openModal(selectedDefinition);
+            }, 4000); // Matches CSS transition duration
+        }
+
+        function resetGame() {
+            if (isSpinning) return;
+            currentDefinitions = [...initialDefinitions];
+            rotation = 0;
+            selectedDefinition = null;
+            wheelEl.style.transition = 'none'; // Instant reset
+            wheelEl.style.transform = `rotate(0deg)`;
+            
+            // Force reflow to re-enable transition for next spin
+            wheelEl.offsetHeight; 
+            wheelEl.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+
+            renderWheel();
+        }
+
+        function removeDefinition() {
+            if (!selectedDefinition) return;
+            currentDefinitions = currentDefinitions.filter(d => d !== selectedDefinition);
+            closeModal();
+            
+            // Reset rotation visually to 0 to avoid complex math on re-render with different slice counts
+            // Optional: could try to maintain orientation, but simpler to reset
+            rotation = 0;
+            wheelEl.style.transition = 'none';
+            wheelEl.style.transform = `rotate(0deg)`;
+            wheelEl.offsetHeight;
+            wheelEl.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+
+            renderWheel();
+        }
+
+        // --- MODAL ---
+        function openModal(text) {
+            modalDefinition.innerText = `"${text}"`;
+            modalOverlay.classList.remove('hidden');
+            // Trigger animation
+            setTimeout(() => {
+                modalOverlay.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modalOverlay.classList.add('hidden');
+            }, 300); // Match transition duration
+        }
+
+        // --- EXPORT ---
+        function downloadSelf() {
+            const htmlContent = document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'index.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
