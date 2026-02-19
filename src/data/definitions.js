@@ -38,7 +38,7 @@ export const definitions = [
     "Tipus de caspasa (3, 6, 7) responsable de l'execució dels canvis finals.",
     "Tipus de caspasa (8, 9) que inicia les cascades apoptòtiques.",
     "Capacitat d'una substància per causar dany o mort cel·lular.",
-    "p53: Proteïna supressora de tumors que activa l'apoptosi.",
-    "Bcl-2: Proteïna anti-apoptòtica mitocondrial.",
-    "Fase amb pèrdua d'integritat de membrana (apoptosi tardana)."
+    "Proteïna supressora de tumors que activa l'apoptosi.",
+    "Proteïna anti-apoptòtica mitocondrial.",
+    "Fase amb pèrdua d'integritat de membrana."
 ];
