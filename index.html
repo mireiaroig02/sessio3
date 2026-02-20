@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ca">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -43,25 +44,45 @@
         }
 
         @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         @keyframes modalOut {
-            from { opacity: 1; transform: scale(1) translateY(0); }
-            to { opacity: 0; transform: scale(0.9) translateY(20px); }
+            from {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
         }
-        
+
         .spin-icon {
             animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body class="min-h-screen bg-pastel-green flex flex-col items-center justify-center p-4 text-gray-800 overflow-hidden">
 
     <!-- Header -->
@@ -70,18 +91,20 @@
             Scientific Bingo Dashboard
         </h1>
         <p class="text-gray-500 mt-2 text-lg">
-            Projecta a l'aula i juga! Definitions remaining: <span id="def-count">42</span>
+            Projecta a l'aula i juga! Definitions remaining: <span id="def-count">38</span>
         </p>
     </header>
 
     <!-- Main Content Area -->
     <div class="relative flex-grow flex items-center justify-center w-full max-w-4xl">
-        
+
         <!-- Wheel Container -->
         <div id="wheel-wrapper" class="relative w-[300px] h-[300px] md:w-[500px] md:h-[500px]">
             <!-- Pointer -->
             <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4 z-20 w-8 h-12">
-                <div class="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-red-500 drop-shadow-md"></div>
+                <div
+                    class="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-red-500 drop-shadow-md">
+                </div>
             </div>
 
             <!-- The Spinning Wheel -->
@@ -97,7 +120,8 @@
         </div>
 
         <!-- Game Over Message -->
-        <div id="game-over" class="hidden absolute text-2xl text-gray-400 font-bold p-12 bg-white rounded-full shadow-inner">
+        <div id="game-over"
+            class="hidden absolute text-2xl text-gray-400 font-bold p-12 bg-white rounded-full shadow-inner">
             JOC ACABAT!
         </div>
 
@@ -105,27 +129,49 @@
 
     <!-- Controls -->
     <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mt-8 z-10 w-full">
-        <button id="btn-spin" onclick="spinWheel()" class="flex items-center gap-2 px-8 py-4 bg-green-accent hover:bg-green-500 text-white font-bold text-xl rounded-full shadow-lg transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
-            <svg id="icon-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 12"></path><path d="M21 3v9h-9"></path></svg>
+        <button id="btn-spin" onclick="spinWheel()"
+            class="flex items-center gap-2 px-8 py-4 bg-green-accent hover:bg-green-500 text-white font-bold text-xl rounded-full shadow-lg transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg id="icon-spin" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="w-6 h-6">
+                <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 12"></path>
+                <path d="M21 3v9h-9"></path>
+            </svg>
             GIRAR RULETA
         </button>
 
-        <button id="btn-reset" onclick="resetGame()" class="flex items-center gap-2 px-6 py-3 bg-pastel-blue hover:bg-blue-200 text-blue-800 font-semibold text-lg rounded-full shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74-2.74L3 12"></path><path d="M3 3v9h9"></path></svg>
+        <button id="btn-reset" onclick="resetGame()"
+            class="flex items-center gap-2 px-6 py-3 bg-pastel-blue hover:bg-blue-200 text-blue-800 font-semibold text-lg rounded-full shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74-2.74L3 12"></path>
+                <path d="M3 3v9h9"></path>
+            </svg>
             Reiniciar joc
         </button>
     </div>
 
     <!-- Export Button -->
-    <button onclick="downloadSelf()" class="mt-8 mb-4 px-4 py-2 bg-pastel-blue/50 hover:bg-pastel-blue text-blue-accent rounded-full text-xs font-medium transition-colors cursor-pointer opacity-70 hover:opacity-100 z-10">
+    <button onclick="downloadSelf()"
+        class="mt-8 mb-4 px-4 py-2 bg-pastel-blue/50 hover:bg-pastel-blue text-blue-accent rounded-full text-xs font-medium transition-colors cursor-pointer opacity-70 hover:opacity-100 z-10">
         Descarregar fitxer per a GitHub
     </button>
 
     <!-- Modal -->
-    <div id="modal-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0" onclick="closeModal()">
-        <div id="modal-content" class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full relative overflow-hidden border-4 border-pastel-blue transform scale-95 transition-all duration-300" onclick="event.stopPropagation()">
-            <button onclick="closeModal()" class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+    <div id="modal-overlay"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+        onclick="closeModal()">
+        <div id="modal-content"
+            class="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full relative overflow-hidden border-4 border-pastel-blue transform scale-95 transition-all duration-300"
+            onclick="event.stopPropagation()">
+            <button onclick="closeModal()"
+                class="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="w-6 h-6">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
             </button>
 
             <div class="text-center space-y-8 mt-2">
@@ -140,11 +186,21 @@
                 </div>
 
                 <div class="flex justify-center gap-4 pt-4">
-                    <button onclick="removeDefinition()" class="flex items-center gap-2 px-6 py-3 bg-red-100 text-red-600 hover:bg-red-200 font-semibold rounded-lg transition-colors group">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 group-hover:scale-110 transition-transform"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path><line x1="10" x2="10" y1="11" y2="17"></line><line x1="14" x2="14" y1="11" y2="17"></line></svg>
+                    <button onclick="removeDefinition()"
+                        class="flex items-center gap-2 px-6 py-3 bg-red-100 text-red-600 hover:bg-red-200 font-semibold rounded-lg transition-colors group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="w-5 h-5 group-hover:scale-110 transition-transform">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            <line x1="10" x2="10" y1="11" y2="17"></line>
+                            <line x1="14" x2="14" y1="11" y2="17"></line>
+                        </svg>
                         Eliminar definició
                     </button>
-                    <button onclick="closeModal()" class="px-6 py-3 bg-gray-100 text-gray-600 hover:bg-gray-200 font-semibold rounded-lg transition-colors">
+                    <button onclick="closeModal()"
+                        class="px-6 py-3 bg-gray-100 text-gray-600 hover:bg-gray-200 font-semibold rounded-lg transition-colors">
                         Tancar
                     </button>
                 </div>
@@ -174,18 +230,14 @@
             "Proteïna que s'uneix a fosfatidilserina externalitzada.",
             "Pathway d'apoptosi activat per danys intracel·lulars.",
             "Complex proteic que activa caspases iniciadores.",
-            "Colorant vital que travessa membranes íntegres.",
             "Citocina que pot activar la via extrínseca d'apoptosi.",
             "Principal caspasa executora de l'apoptosi.",
             "Proteïna mitocondrial alliberada durant la via intrínseca.",
             "Caspasa iniciadora de la via extrínseca.",
-            "Assaig colorimètric que mesura activitat metabòlica.",
             "Percentatge de cèl·lules vives en un cultiu.",
             "Colorant que només entra en cèl·lules amb membrana plasmàtica danyada.",
             "Tècnica que permet el creixement de cèl·lules fora del seu entorn natural.",
             "Complex DNA-histones que es condensa i reorganitza durant l'apoptosi.",
-            "Disminució de mida cel·lular i pèrdua d'adhesions cel·lulars.",
-            "Estat compactat i reorganitzat del DNA nuclear durant l'apoptosi.",
             "Durada que les cèl·lules han estat en cultiu.",
             "Enzims que tallen el DNA internament (fragmentació).",
             "Compactació de la cromatina nuclear característica de l'apoptosi.",
@@ -195,11 +247,11 @@
             "Tipus de caspasa (3, 6, 7) responsable de l'execució dels canvis finals.",
             "Tipus de caspasa (8, 9) que inicia les cascades apoptòtiques.",
             "Capacitat d'una substància per causar dany o mort cel·lular.",
-            "p53: Proteïna supressora de tumors que activa l'apoptosi.",
-            "Bcl-2: Proteïna anti-apoptòtica mitocondrial.",
+            "Proteïna supressora de tumors que activa l'apoptosi.",
+            "Proteïna anti-apoptòtica mitocondrial.",
             "Fase amb pèrdua d'integritat de membrana (apoptosi tardana)."
         ];
-        
+
         const COLORS = ['#E8F5E9', '#E3F2FD', '#81C784', '#64B5F6', '#FFF9C4', '#F8BBD0'];
 
         // --- STATE ---
@@ -215,7 +267,7 @@
         const defCountEl = document.getElementById('def-count');
         const gameOverEl = document.getElementById('game-over');
         const wheelWrapper = document.getElementById('wheel-wrapper');
-        
+
         const btnSpin = document.getElementById('btn-spin');
         const btnReset = document.getElementById('btn-reset');
         const iconSpin = document.getElementById('icon-spin');
@@ -227,7 +279,7 @@
         // --- INITIALIZATION ---
         function renderWheel() {
             const numItems = currentDefinitions.length;
-            
+
             // Clear content
             wheelSlices.innerHTML = '';
             wheelText.innerHTML = '';
@@ -270,7 +322,7 @@
                 const largeArcFlag = sliceAngle > 180 ? 1 : 0;
 
                 const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
-                
+
                 const pathEl = document.createElementNS("http://www.w3.org/2000/svg", "path");
                 pathEl.setAttribute('d', pathData);
                 pathEl.setAttribute('fill', COLORS[index % COLORS.length]);
@@ -284,7 +336,7 @@
                 const textRadius = radius * 0.75;
                 const tx = cx + textRadius * Math.cos(rad);
                 const ty = cy + textRadius * Math.sin(rad);
-                
+
                 // Truncate logic similar to React
                 let displayText = numItems <= 12 ? (item.length > 15 ? item.substring(0, 15) + '...' : item) : (index + 1).toString();
 
@@ -326,9 +378,9 @@
             const distance = (targetAngle - currentRotationMod + 360) % 360;
             const extraSpins = 1800; // 5 spins
             const newRotation = rotation + extraSpins + distance;
-            
+
             rotation = newRotation;
-            
+
             // Apply rotation
             wheelEl.style.transform = `rotate(${rotation}deg)`;
 
@@ -349,9 +401,9 @@
             selectedDefinition = null;
             wheelEl.style.transition = 'none'; // Instant reset
             wheelEl.style.transform = `rotate(0deg)`;
-            
+
             // Force reflow to re-enable transition for next spin
-            wheelEl.offsetHeight; 
+            wheelEl.offsetHeight;
             wheelEl.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
 
             renderWheel();
@@ -361,7 +413,7 @@
             if (!selectedDefinition) return;
             currentDefinitions = currentDefinitions.filter(d => d !== selectedDefinition);
             closeModal();
-            
+
             // Reset rotation visually to 0 to avoid complex math on re-render with different slice counts
             // Optional: could try to maintain orientation, but simpler to reset
             rotation = 0;
@@ -409,4 +461,5 @@
         }
     </script>
 </body>
+
 </html>
